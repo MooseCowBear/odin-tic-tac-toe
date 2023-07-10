@@ -1,4 +1,12 @@
 
+form {
+  display: none;
+}
+
+form.show {
+  display: block;
+}
+
 .error {
   display: none;
 }

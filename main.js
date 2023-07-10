@@ -72,8 +72,7 @@ const gameController = (playerName1, playerName2 = null) => {
 
   let currPlayer = player1.getMark() === "X" ? player1 : player2; 
 
-  console.log("player1", player1, "player2", player2, "curr player", currPlayer);
-  console.log(player1.getMark(), player2.getMark());
+  console.log("starting curr player", currPlayer.getName(), "with mark", currPlayer.getMark());
 
   const getBoard = () => {
     return board.board;
@@ -85,6 +84,7 @@ const gameController = (playerName1, playerName2 = null) => {
 
   const _updatePlayer = () => {
     currPlayer = currPlayer === player1 ? player2 : player1;
+    console.log("currPlayer after update is", currPlayer);
   };
 
   const getCurrPlayer = () => {
@@ -151,13 +151,14 @@ const screenController = (one, two) => {
 
   const updateScreen = () => {
     const currPlayer = game.getCurrPlayer();
+    console.log("in update screen CURR PLAYER IS", currPlayer.getName());
+
     const board = game.getBoard();
-    console.log("the current board is", board);
 
     //update annoucement
     if (gameOver) {
       //want to annoucewinner, else draw -- NEEDS TO BE FINISHED
-      annouceDiv.textContent = "The game is finished";
+      _annouceResult();
     }
     else {
       annouceDiv.textContent = `${currPlayer.getName()}'s turn.`
@@ -180,24 +181,31 @@ const screenController = (one, two) => {
   };
 
   const clickHandler = (e) => {
-    //might need a check for is the curr player human. 
-    console.log("in click handler");
-
     const currPlayer = game.getCurrPlayer();
 
     if (e.target.tagName.toLowerCase() === "button" && currPlayer.isHuman()) {
-      console.log("taking a human turn");
-
+      console.log("am i here?");
       gameOver = game.takeTurn(e.target.dataset.index);
       updateScreen();
+      if (gameOver) return;
 
       if (computer) {
-        console.log("computer takes a turn");
-
-        const computerTurn = computer.makeMove(game.getBoard());
-        gameOver = game.takeTurn(computerTurn);
-        updateScreen();
+        setTimeout(() => {
+          const computerTurn = computer.makeMove(game.getBoard()); 
+          gameOver = game.takeTurn(computerTurn); 
+          updateScreen();
+        }, 300);
       }
+    }
+  }
+
+  const _annouceResult = () => {
+    const winner = game.getWinner();
+    if (winner) {
+      annouceDiv.textContent = `The winner is ${winner.getName()}.`;
+    }
+    else {
+      annouceDiv.textContent = "It is a draw.";
     }
   }
 
@@ -213,40 +221,57 @@ const screenController = (one, two) => {
   //do the initial render
   updateScreen();
 
-  if (computer) {
-    console.log("computer takes first turn");
+  if (computer && computer.getMark() === "X") {
+    console.log("THE COMPUTER HAD FIRST MOVE");
 
-    const computerTurn = computer.makeMove(game.getBoard()); //NOT DEFINED
-    gameOver = game.takeTurn(computerTurn);
-    updateScreen();
+    setTimeout(() => {
+      const computerTurn = computer.makeMove(game.getBoard()); 
+      gameOver = game.takeTurn(computerTurn); 
+      updateScreen();
+    }, 300);
   }
 };
 
-//WRAP THIS IN ITS OWN IFFE
-const newGame = document.querySelector('input[type="submit"]');
-newGame.addEventListener("click", (e) => {
-  //need to check that at least one name has been entered
-  e.preventDefault();
+(function() {
+  const startNewGame = document.querySelector('input[type="submit"]');
   const inputs = document.querySelectorAll('input[type="text"]');
-  const names = [];
   const error = document.querySelector(".error");
+  const playerForm = document.querySelector("form");
+  const showFormBtn = document.getElementById("play-game");
 
-  inputs.forEach((elem) => {
-    names.push(elem.value);
+  showFormBtn.addEventListener("click", () => {
+    playerForm.classList.add("show");
   });
-  console.log(names);
 
-  if (!names.some((elem) => elem !== "")) {
-    //need to show errors and other wise do nothing
-    error.classList.add("show");
-  }
-  else {
-    screenController(names[0], (names.length > 1 ? names[1] : null));
+  startNewGame.addEventListener("click", (e) => {
+    e.preventDefault();
+    const names = [];
 
-    //plus reset the form and hide it, which should happen first
+    inputs.forEach((elem) => {
+      names.push(elem.value);
+    });
+
+    //need at least one human player
+    if (!names.some((elem) => elem !== "")) {
+      error.classList.add("show");
+    }
+    else {
+      screenController(names[0], (names.length > 1 ? names[1] : null));
+      resetForm();
+    }
+  });
+
+  //if they changed their mind about playing
+  const cancelGameBtn = document.getElementById("cancel-game");
+  cancelGameBtn.addEventListener("click", () => {
+    resetForm();
+  })
+
+  function resetForm() {
     inputs.forEach((elem) => {
       elem.value = "";
     });
     error.classList.remove("show");
+    playerForm.classList.remove("show");
   }
-});
+})();
