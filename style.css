@@ -1,0 +1,11 @@
+
+#board {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-rows: 100px;
+  max-width: 800px;
+}
+
+#board > div {
+  border: 1px solid black;
+}
