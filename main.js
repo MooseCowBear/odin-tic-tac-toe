@@ -72,8 +72,6 @@ const gameController = (playerName1, playerName2 = null) => {
 
   let currPlayer = player1.getMark() === "X" ? player1 : player2; 
 
-  console.log("starting curr player", currPlayer.getName(), "with mark", currPlayer.getMark());
-
   const getBoard = () => {
     return board.board;
   };
@@ -84,7 +82,6 @@ const gameController = (playerName1, playerName2 = null) => {
 
   const _updatePlayer = () => {
     currPlayer = currPlayer === player1 ? player2 : player1;
-    console.log("currPlayer after update is", currPlayer);
   };
 
   const getCurrPlayer = () => {
@@ -109,8 +106,6 @@ const gameController = (playerName1, playerName2 = null) => {
     for (let i = 0; i < winConditions.length; i ++) {
       won = winConditions[i].every(v => indices.includes(v));
       if (won) {
-        console.log("a winner");
-
         winner = player; //not ideal to do this here....
         break;
       }
@@ -136,8 +131,6 @@ const gameController = (playerName1, playerName2 = null) => {
 
 //want to call this when "player form" has been submitted
 const screenController = (one, two) => {
-  console.log("one", one, "two,", two);
-
   const game = gameController(one, two);
   const computer = game.computerPlayer();
 
@@ -147,12 +140,8 @@ const screenController = (one, two) => {
   const boardDiv = document.getElementById("board");
   const annouceDiv = document.getElementById("annoucement");
 
-  console.log(boardDiv, annouceDiv);
-
   const updateScreen = () => {
     const currPlayer = game.getCurrPlayer();
-    console.log("in update screen CURR PLAYER IS", currPlayer.getName());
-
     const board = game.getBoard();
 
     //update annoucement
@@ -184,7 +173,6 @@ const screenController = (one, two) => {
     const currPlayer = game.getCurrPlayer();
 
     if (e.target.tagName.toLowerCase() === "button" && currPlayer.isHuman()) {
-      console.log("am i here?");
       gameOver = game.takeTurn(e.target.dataset.index);
       updateScreen();
       if (gameOver) return;
@@ -194,7 +182,7 @@ const screenController = (one, two) => {
           const computerTurn = computer.makeMove(game.getBoard()); 
           gameOver = game.takeTurn(computerTurn); 
           updateScreen();
-        }, 300);
+        }, 500);
       }
     }
   }
@@ -209,26 +197,15 @@ const screenController = (one, two) => {
     }
   }
 
-  //add the click listener
   boardDiv.addEventListener("click", clickHandler);
-
-  /* for a computer game, 
-    will want: for every human turn, take a computer turn
-    so every click, then add computer turn
-    + an inital turn if computer goes first...
-  */
-
-  //do the initial render
   updateScreen();
 
   if (computer && computer.getMark() === "X") {
-    console.log("THE COMPUTER HAD FIRST MOVE");
-
     setTimeout(() => {
       const computerTurn = computer.makeMove(game.getBoard()); 
       gameOver = game.takeTurn(computerTurn); 
       updateScreen();
-    }, 300);
+    }, 500);
   }
 };
 
