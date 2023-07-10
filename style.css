@@ -1,4 +1,12 @@
 
+.error {
+  display: none;
+}
+
+.error.show {
+  display: block;
+}
+
 #board {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

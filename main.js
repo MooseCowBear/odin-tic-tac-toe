@@ -29,7 +29,7 @@ const ComputerPlayer = (name, mark) => {
   }
 };
 
-const boardFactory = () => {
+const Board = () => {
   const board = new Array(9);
   board.fill(""); //empty string because we will use this in dom
 
@@ -62,7 +62,7 @@ const gameController = (playerName1, playerName2 = null) => {
     player2 = Player(playerName2, markTwo);
   }
 
-  const board = boardFactory();
+  const board = Board();
 
   let winner = null;
 
@@ -206,6 +206,18 @@ const screenController = (one, two) => {
   }
 };
 
-//need form input to start...
+//WRAP THIS IN ITS OWN IFFE
+const newGame = document.querySelector('input[type="submit"]');
+newGame.addEventListener("click", (e) => {
+  //need to check that at least one name has been entered
+  e.preventDefault();
+  const inputs = document.querySelectorAll('input[type="text"]');
+  if (!inputs.some((elem) => elem !== "")) {
+    //need to show errors and other wise do nothing
+  }
+  else {
+    screenController(inputs[0], inputs.length > 1 ? inputs[1] : null);
 
-//testing
+    //plus reset the form and hide it, which should happen first
+  }
+});
