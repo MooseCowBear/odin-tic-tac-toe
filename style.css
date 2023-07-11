@@ -167,6 +167,12 @@ form.show {
   border: none;
 }
 
-button {
+button:enabled {
   cursor: pointer;
+}
+
+.gameover {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #158c9c;
 }
