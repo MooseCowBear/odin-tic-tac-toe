@@ -195,14 +195,14 @@ const screenController = (one, two) => {
   const boardDiv = document.getElementById("board");
   const annouceDiv = document.getElementById("annoucement");
 
-  const updateScreen = () => {
+  const _updateScreen = () => {
     const currPlayer = game.getCurrPlayer();
     const board = game.getBoard();
 
     //update annoucement
     if (gameOver) {
       _annouceResult();
-      boardDiv.removeEventListener("click", clickHandler);
+      boardDiv.removeEventListener("click", _clickHandler);
     }
     else {
       annouceDiv.textContent = `${currPlayer.getName()}'s turn.`
@@ -224,19 +224,20 @@ const screenController = (one, two) => {
     }
   };
 
-  const clickHandler = (e) => {
+  const _clickHandler = (e) => {
     const currPlayer = game.getCurrPlayer();
 
     if (e.target.tagName.toLowerCase() === "button" && currPlayer.isHuman()) {
       gameOver = game.takeTurn(e.target.dataset.index);
-      updateScreen();
+      _updateScreen();
+      
       if (gameOver) return;
 
       if (computer) {
         setTimeout(() => {
           const computerTurn = computer.makeSmartMove(game.getBoard(), winConditions); 
           gameOver = game.takeTurn(computerTurn); 
-          updateScreen();
+          _updateScreen();
         }, 1000);
       }
     }
@@ -253,15 +254,15 @@ const screenController = (one, two) => {
     annouceDiv.classList.add("gameover");
   }
 
-  boardDiv.addEventListener("click", clickHandler);
-  updateScreen();
+  boardDiv.addEventListener("click", _clickHandler);
+  _updateScreen();
 
   //is the computer the first player? if so, it needs to move first
   if (computer && computer.getMark() === "X") {
     setTimeout(() => {
       const computerTurn = computer.makeSmartMove(game.getBoard(), winConditions); 
       gameOver = game.takeTurn(computerTurn); 
-      updateScreen();
+      _updateScreen();
     }, 1000);
   }
 };
