@@ -80,7 +80,9 @@ const Board = () => {
   board.fill(""); //empty string because we will use this in dom
 
   const updateBoard = (index, mark) => {
-    board[index] = mark;
+    if (board[index] === "") {
+      board[index] = mark;
+    }
   };
 
    const getSquare = (index) => {
@@ -230,7 +232,7 @@ const screenController = (one, two) => {
     if (e.target.tagName.toLowerCase() === "button" && currPlayer.isHuman()) {
       gameOver = game.takeTurn(e.target.dataset.index);
       _updateScreen();
-      
+
       if (gameOver) return;
 
       if (computer) {
