@@ -14,13 +14,6 @@ const Player = (name, mark) => {
 const ComputerPlayer = (name, mark) => {
   const computer = Player(name, mark);
 
-  const makeMove = (board) => {
-    //grab any random empty square for now
-    const possibleMoves = board.map((elem, i) => (elem) === "" ? i : -1).filter(elem => elem !== -1);
-    const index = Math.floor(Math.random() * possibleMoves.length);
-    return possibleMoves[index];
-  };
-
   const makeSmartMove = (board, winConditions) => {
     const moveScores = _startingMoveScores();
     const opponentMark = mark === "X" ? "O" : "X";
@@ -56,7 +49,7 @@ const ComputerPlayer = (name, mark) => {
   const _checkMove = (board, winCondition, m) => {
     //helper method to check whether move is forced or winning
     const [p, q] = winCondition;
-    
+
     if (board[p] === m && board[q] === m) {
       return true;
     }
@@ -77,7 +70,6 @@ const ComputerPlayer = (name, mark) => {
 
   return {
     ...computer,
-    makeMove,
     makeSmartMove,
     isHuman
   }
